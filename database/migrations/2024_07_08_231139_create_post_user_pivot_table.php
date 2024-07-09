@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('comments', function (Blueprint $table) {
-            $table->id();
-            $table->json('body')->nullable();
-            $table->foreignId('user_id');
+        Schema::create('post_user', function (Blueprint $table) {
+            $table->foreignId('user_id')->index();
             $table->foreign('user_id')->on('users')->references('id')->cascadeOnDelete();
-            $table->foreignId('post_id');
+            $table->foreignId('post_id')->index();
             $table->foreign('post_id')->on('posts')->references('id')->cascadeOnDelete();
+            $table->primary(['post_id' , 'user_id']);
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('comments');
+        Schema::dropIfExists('post_user');
     }
 };
