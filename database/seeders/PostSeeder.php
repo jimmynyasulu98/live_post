@@ -20,7 +20,7 @@ class PostSeeder extends Seeder
     {
         $this->disableForeignKey(); # disable foregn key checks for truncating
         $this->truncate('posts'); # disable repeated migrations during every seeding
-        $posts = Post::factory(6)->create();
+        $posts = Post::factory(300)->create();
         $this->enableForeignKey(); # reanable foregn key checks
         
         $posts->each(function(Post $post){

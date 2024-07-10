@@ -12,6 +12,11 @@ class Post extends Model
         'body'=> 'array',
     ]; # cast body to array for easy converstion from json from DB to array
 
+    protected $fillable = [
+        'title',
+        'body',
+    ];
+
     public function comments(){
         return $this->hasMany(Comment::class, 'post_id');
     }
