@@ -11,7 +11,7 @@ class StorePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,25 @@ class StorePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => ['string', 'required'],
+            'body' => ['string', 'required'],
+            'user_ids' => ['array', 'required',
+            # Check if every Id supplied is an integer. Altenatively a rule can be created to perform the task
+            function($attribute, $value, $fail){
+                $integerId = collect($value)->every(fn ($element) => is_int($element));
+                if(!$integerId){
+                    $fail($attribute . ' Only integers allowed');
+                }
+            }
+        ],
+        ];
+    }
+
+    public function messages(){
+        return [
+            'title.string' => 'Title must be string',
+            'body.required' => 'Please enter a valid value for the body field',
+
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\jsonException;
+use App\Http\Requests\StorePostRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -27,7 +28,7 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
         $createdRecord = DB::transaction( function () use($request){
             $createdRecord = Post::query()->create(
