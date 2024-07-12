@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\CommentResource;
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use App\Exceptions\jsonException;
 use Illuminate\Http\JsonResponse;
+use App\Http\Resources\CommentResource;
 
 class CommentController extends Controller
 {
@@ -32,6 +33,7 @@ class CommentController extends Controller
                 'body' => $request->body,
             ]
         );
+        throw_if(!$createdRecord, jsonException::class, "could not create a record");
         return new CommentResource($createdRecord);
     }
 
@@ -53,12 +55,12 @@ class CommentController extends Controller
                 'body' => $request->body ?? $comment->body,
             ]
         );
-        if(!$updatedRecord){
+        /* if(!$updatedRecord){
             return new JsonResponse([
                 'Errors' => ['could not update record'],
             ],400);
-        }
-
+        } */
+         throw_if(!$updatedRecord, jsonException::class, "could not update a record");
         return new CommentResource($comment);
     }
 
@@ -68,12 +70,12 @@ class CommentController extends Controller
     public function destroy(Comment $comment)
     {
         $deletedRecord = $comment->forceDelete();
-        if(!$deletedRecord){
+       /*  if(!$deletedRecord){
             return new JsonResponse([
                 'Errors' => ['could not delete record'],
             ],400);
-        }
-
+        } */
+        throw_if(!$deletedRecord, jsonException::class, "could not delete a record");
         return new JsonResponse([
             'data' => 'success',
         ]);

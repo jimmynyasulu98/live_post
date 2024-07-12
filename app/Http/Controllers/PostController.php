@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\jsonException;
 use App\Models\Post;
 use Illuminate\Http\Request;
-use GuzzleHttp\Promise\Create;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use App\Http\Requests\StorePostRequest;
-use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\PostResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -20,6 +18,7 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
+        
         $page_size = $request->page_size ?? 15;
         $posts = Post::query()->paginate($page_size);
         return PostResource::collection($posts);
@@ -37,6 +36,7 @@ class PostController extends Controller
                     'body' => $request->body,
                 ]
             );
+            throw_if(!$createdRecord, jsonException::class, "could not create a record");
             $createdRecord->users()->sync($request->user_ids);
             return $createdRecord;
 
@@ -64,11 +64,12 @@ class PostController extends Controller
                 'body'  => $request->body ?? $post->body,
             ]
         );
-        if(!$updatedRecord){
+       /*  if(!$updatedRecord){
             return new JsonResponse([
                 'Errors' => ['could not update record'],
             ],400);
-        }
+        } */
+       throw_if(!$updatedRecord, jsonException::class, "could not update record");
 
         return new PostResource($updatedRecord);
     }
@@ -79,12 +80,12 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         $deletedRecord = $post->forceDelete();
-        if(!$deletedRecord){
+        /* if(!$deletedRecord){
             return new JsonResponse([
                 'Errors' => ['could not delete record'],
             ],400);
-        }
-
+        } */
+        throw_if(!$deletedRecord, jsonException::class, "could not delete a record");
         return new JsonResponse([
             'data' => 'success',
         ]);
